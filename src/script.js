@@ -4,15 +4,19 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 
 // Textures
-const image = new Image()
-const texture = new THREE.Texture(image)
-
-image.onload = () =>
-{
-    texture.needsUpdate = true
+function makeImageTexture(imageFilename) {
+    const img = new Image()
+    const tex = new THREE.Texture(img)
+    img.onload = () => {
+      tex.needsUpdate = true
+    }
+    img.src = imageFilename
+    return tex
 }
 
-image.src = 'mrks.jpeg'
+const texMarkus = makeImageTexture('mrks.jpeg')
+const texWenMoon = makeImageTexture('wenMoon.jpeg')
+
 
 const textureLoader = new THREE.TextureLoader()
 const particleTexture = textureLoader.load('star.png')
@@ -65,16 +69,25 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
-const material = new THREE.MeshBasicMaterial({ map: texture })
-material.flatShading = true
+const matMarkus = new THREE.MeshBasicMaterial({ map: texMarkus })
+matMarkus.flatShading = true
+const matWenMoon = new THREE.MeshBasicMaterial({ map: texWenMoon })
+matWenMoon.flatShading = true
 
-const sphere = new THREE.Mesh(
+const markus = new THREE.Mesh(
     new THREE.SphereGeometry(0.5, 32, 16),
-    material
+    matMarkus
 )
-sphere.position.x = 0
+markus.position.x = 0
 
-scene.add(sphere, particles)
+const wenMoon = new THREE.Mesh(
+    new THREE.SphereGeometry(0.1, 32, 16),
+    matWenMoon
+)
+wenMoon.position.x = 0
+
+scene.add(markus, particles)
+scene.add(wenMoon)
 
 /**
  * Sizes
@@ -133,8 +146,26 @@ const tick = () =>
 
     // Update objects
     particles.rotation.y = 0.02 * elapsedTime
-    sphere.rotation.x = 0.3 * elapsedTime
-    sphere.rotation.y = 0.1 * elapsedTime
+    markus.rotation.x = 0.3 * elapsedTime
+    markus.rotation.y = 0.1 * elapsedTime
+
+
+    const 𝛕 = 6.28318
+    const orbit = {
+      eccentricity: 0.0,
+      siderealOrbitPeriod: 1.0,
+    }
+    const aRadius = 1.25
+    const bRadius = aRadius * Math.sqrt(1.0 - Math.pow(orbit.eccentricity, 2.0))
+    const angle = 1.0 * 0.02 * elapsedTime / orbit.siderealOrbitPeriod * 𝛕
+    const x = aRadius * Math.cos(angle)
+    const y = bRadius * Math.sin(angle)
+    const z = 0
+    wenMoon.position.set(x, y, z)
+    wenMoon.rotation.x = 𝛕 / 2
+    wenMoon.rotation.z = 𝛕 / 3
+    wenMoon.rotation.y = -1 + 2 * markus.rotation.y * 𝛕 / 3
+
 
     // Update controls
     controls.update()
