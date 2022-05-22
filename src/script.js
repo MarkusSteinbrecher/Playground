@@ -2,6 +2,17 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
+// Textures
+const image = new Image()
+const texture = new THREE.Texture(image)
+
+image.onload = () =>
+{
+    texture.needsUpdate = true
+}
+
+image.src = 'mrks.jpeg'
+
 /**
  * Base
  */
@@ -11,12 +22,14 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
-const material = new THREE.MeshBasicMaterial()
+const material = new THREE.MeshBasicMaterial({ map: texture })
+material.flatShading = true
 
 const sphere = new THREE.Mesh(
-    new THREE.SphereGeometry(0.5, 16, 16),
+    new THREE.SphereGeometry(1, 32, 16),
     material
 )
+sphere.position.x = 0
 
 scene.add(sphere)
 
@@ -74,6 +87,9 @@ const clock = new THREE.Clock()
 const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
+
+    // Update objects
+    sphere.rotation.y = 0.3 * elapsedTime
 
     // Update controls
     controls.update()
