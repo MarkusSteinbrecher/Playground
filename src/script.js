@@ -26,7 +26,7 @@ const material = new THREE.MeshBasicMaterial({ map: texture })
 material.flatShading = true
 
 const sphere = new THREE.Mesh(
-    new THREE.SphereGeometry(1, 32, 16),
+    new THREE.SphereGeometry(0.5, 32, 16),
     material
 )
 sphere.position.x = 0
