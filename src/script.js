@@ -11,6 +11,15 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
+const material = new THREE.MeshBasicMaterial()
+
+const sphere = new THREE.Mesh(
+    new THREE.SphereGeometry(0.5, 16, 16),
+    material
+)
+
+scene.add(sphere)
+
 /**
  * Sizes
  */
