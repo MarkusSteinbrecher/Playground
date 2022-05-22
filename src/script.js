@@ -24,10 +24,12 @@ const particlesGeometry = new THREE.BufferGeometry(1, 32, 32)
 const count = 4223
 
 const positions = new Float32Array(count * 3)
+const colors = new Float32Array(count * 3)
 
 for(let i = 0; i < count * 3; i++)
 {
     positions[i] = (Math.random() - 0.5) * 23
+    colors[i] = Math.random()
 
 }
 
@@ -36,14 +38,21 @@ particlesGeometry.setAttribute(
     new THREE.BufferAttribute(positions, 3)
 )
 
+particlesGeometry.setAttribute(
+    'color',
+    new THREE.BufferAttribute(colors, 3)
+)
+
 const particlesMaterial = new THREE.PointsMaterial()
 particlesMaterial.size = 0.1
 particlesMaterial.sizeAttenuation = true
-particlesMaterial.color = new THREE.Color ('#00FF00')
+//particlesMaterial.color = new THREE.Color ('#00ff00')
 particlesMaterial.transparent = true
 particlesMaterial.alphaMap = particleTexture
 particlesMaterial.alphaTest = 0.001
 particlesMaterial.depthWrite = false
+particlesMaterial.blending = THREE.AdditiveBlending
+particlesMaterial.vertexColors = true
 
 const particles = new THREE.Points(particlesGeometry, particlesMaterial)
 
