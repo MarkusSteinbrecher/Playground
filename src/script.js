@@ -2,6 +2,7 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
+
 // Textures
 const image = new Image()
 const texture = new THREE.Texture(image)
@@ -12,6 +13,38 @@ image.onload = () =>
 }
 
 image.src = 'mrks.jpeg'
+
+const textureLoader = new THREE.TextureLoader()
+const particleTexture = textureLoader.load('star.png')
+
+
+// Particles
+
+const particlesGeometry = new THREE.BufferGeometry(1, 32, 32)
+const count = 4223
+
+const positions = new Float32Array(count * 3)
+
+for(let i = 0; i < count * 3; i++)
+{
+    positions[i] = (Math.random() - 0.5) * 23
+
+}
+
+particlesGeometry.setAttribute(
+    'position',
+    new THREE.BufferAttribute(positions, 3)
+)
+
+const particlesMaterial = new THREE.PointsMaterial()
+particlesMaterial.size = 0.1
+particlesMaterial.sizeAttenuation = true
+particlesMaterial.color = new THREE.Color ('#00FF00')
+particlesMaterial.transparent = true
+particlesMaterial.alphaMap = particleTexture
+particlesMaterial.alphaTest = 0.001
+
+const particles = new THREE.Points(particlesGeometry, particlesMaterial)
 
 /**
  * Base
@@ -31,7 +64,7 @@ const sphere = new THREE.Mesh(
 )
 sphere.position.x = 0
 
-scene.add(sphere)
+scene.add(sphere, particles)
 
 /**
  * Sizes
@@ -89,7 +122,7 @@ const tick = () =>
     const elapsedTime = clock.getElapsedTime()
 
     // Update objects
-    sphere.rotation.y = 0.3 * elapsedTime
+    particles.rotation.y = 0.02 * elapsedTime
 
     // Update controls
     controls.update()
