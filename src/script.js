@@ -43,6 +43,7 @@ particlesMaterial.color = new THREE.Color ('#00FF00')
 particlesMaterial.transparent = true
 particlesMaterial.alphaMap = particleTexture
 particlesMaterial.alphaTest = 0.001
+particlesMaterial.depthWrite = false
 
 const particles = new THREE.Points(particlesGeometry, particlesMaterial)
 
@@ -123,6 +124,8 @@ const tick = () =>
 
     // Update objects
     particles.rotation.y = 0.02 * elapsedTime
+    sphere.rotation.x = 0.3 * elapsedTime
+    sphere.rotation.y = 0.1 * elapsedTime
 
     // Update controls
     controls.update()
