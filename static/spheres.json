@@ -24,7 +24,7 @@
     {
       "id": "Bldrs",
       "texture": "bldrs.png",
-      "radius": 0.07,
+      "radius": 0.1,
       "position": {
         "x": 0,
         "y": 0,
