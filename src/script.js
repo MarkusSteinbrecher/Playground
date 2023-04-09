@@ -6,6 +6,7 @@ async function loadSpheresData() {
   const response = await fetch('spheres.json');
   const data = await response.json();
   createSpheresFromData(data);
+  scene.add(particles);
 }
 
 function createSpheresFromData(data) {
@@ -25,9 +26,12 @@ function createSpheresFromData(data) {
     );
 
     sphere.name = sphereData.id;
+    sphere.userData = { link: sphereData.link };
     scene.add(sphere);
   });
 }
+
+
 
 // Textures
 function makeImageTexture(imageFilename) {
@@ -44,7 +48,7 @@ const textureLoader = new THREE.TextureLoader();
 const particleTexture = textureLoader.load('star.png');
 
 // Particles
-const particlesGeometry = new THREE.BufferGeometry(1, 32, 32);
+const particlesGeometry = new THREE.BufferGeometry();
 const count = 4223;
 
 const positions = new Float32Array(count * 3);
@@ -104,7 +108,30 @@ const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 
 camera.position.x = 1;
 camera.position.y = 1;
 camera.position.z = 2;
-scene.add(camera);
+camera.target = new THREE.Vector3();
+
+
+function transitionCameraTo(position, target) {
+  const startPosition = camera.position.clone();
+  const startTarget = camera.target.clone();
+  const startTime = performance.now();
+
+  function transition() {
+    const duration = 1000;
+    const t = Math.min((performance.now() - startTime) / duration, 1);
+    const easingFactor = t * (2 - t); // ease in-out cubic
+
+    camera.position.lerpVectors(startPosition, position, easingFactor);
+    camera.target.lerpVectors(startTarget, target, easingFactor);
+    camera.lookAt(camera.target);
+
+    if (t < 1) {
+      requestAnimationFrame(transition);
+    }
+  }
+
+  transition();
+}
 
 // Controls
 const controls = new OrbitControls(camera, canvas);
@@ -151,6 +178,46 @@ const tick = () => {
     wenMoon.rotation.y = -1 + 2 * (markus ? markus.rotation.y : 0) * 𝛕 / 3;
   }
 
+  const bldrs = scene.getObjectByName('Bldrs');
+  if (bldrs) {
+    const 𝛕 = 6.28318;
+    const orbit = {
+      eccentricity: 0.0,
+      siderealOrbitPeriod: 1.0,
+    };
+    const aRadius = 0.7;
+    const bRadius = aRadius * Math.sqrt(1.0 - Math.pow(orbit.eccentricity, 2.0));
+    const angle = 2.3 * 0.02 * elapsedTime / orbit.siderealOrbitPeriod * 𝛕;
+    const x = aRadius * Math.cos(angle);
+    const y = bRadius * Math.sin(angle);
+    const z = 0;
+    bldrs.position.set(x, y, z);
+    bldrs.rotation.x = 𝛕 / 2;
+    bldrs.rotation.z = 𝛕 / 3;
+    bldrs.rotation.y = -1 + 2 * (markus ? markus.rotation.y : 0) * 𝛕 / 3;
+  }
+
+  const opensourceConstruction = scene.getObjectByName('opensourceConstruction');
+  if (opensourceConstruction) {
+    const 𝛕 = 6.28318;
+    const orbit = {
+      eccentricity: 0.0,
+      siderealOrbitPeriod: 1.0,
+    };
+    const aRadius = 0.7;
+    const bRadius = aRadius * Math.sqrt(1.0 - Math.pow(orbit.eccentricity, 2.0));
+    const angle = 4.2 * 0.02 * elapsedTime / orbit.siderealOrbitPeriod * 𝛕;
+    const x = aRadius * Math.cos(angle);
+    const y = bRadius * Math.sin(angle);
+    const z = 0;
+    opensourceConstruction.position.set(x, y, z);
+    opensourceConstruction.rotation.x = 𝛕 / 2;
+    opensourceConstruction.rotation.z = 𝛕 / 3;
+    opensourceConstruction.rotation.y = -1 + 2 * (markus ? markus.rotation.y : 0) * 𝛕 / 3;
+  }
+
+  
+
   // Update controls
   controls.update();
 
@@ -160,6 +227,43 @@ const tick = () => {
   // Call tick again on the next frame
   window.requestAnimationFrame(tick);
 };
+
+// Raycaster
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+// Event listener for mouse clicks
+raycaster.params.Points.threshold = 0.1;
+canvas.addEventListener('click', (event) => {
+  event.preventDefault();
+
+  // Convert mouse click coordinates to normalized device coordinates
+  mouse.x = (event.clientX / sizes.width) * 2 - 1;
+  mouse.y = -(event.clientY / sizes.height) * 2 + 1;
+
+  // Update the picking ray with the camera and mouse position
+  raycaster.setFromCamera(mouse, camera);
+
+  // Calculate objects intersecting the picking ray
+  const intersects = raycaster.intersectObjects(scene.children, true);
+
+  // Check if a sphere or the GitHub logo was clicked
+  if (intersects.length > 0) {
+    if (intersects[0].object.userData.link) {
+      const anchor = document.createElement('a');
+      anchor.href = intersects[0].object.userData.link;
+      anchor.target = '_blank';
+      anchor.rel = 'noopener noreferrer';
+      anchor.click();
+    } else if (intersects[0].object.type === 'Mesh') {
+      const spherePosition = intersects[0].object.position.clone();
+      const cameraPosition = spherePosition.clone().add(new THREE.Vector3(0, 0, 2));
+      transitionCameraTo(cameraPosition, spherePosition);
+    }
+  }
+});
+
+
 
 loadSpheresData();
 tick();

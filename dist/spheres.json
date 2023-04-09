@@ -1,0 +1,43 @@
+[
+    {
+      "id": "markus",
+      "texture": "BldrMrks.jpeg",
+      "radius": 0.5,
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "wenMoon",
+      "texture": "wenMoon.jpeg",
+      "radius": 0.1,
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "star",
+      "texture": "star.png",
+      "radius": 0.1,
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "test",
+      "texture": "",
+      "radius": 0.1,
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    }
+  ]
+  

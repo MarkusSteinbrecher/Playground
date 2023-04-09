@@ -1,0 +1,47 @@
+[
+    {
+      "id": "markus",
+      "texture": "BldrMrks.jpeg",
+      "radius": 0.5,
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "link": "https://github.com/MarkusSteinbrecher/"
+    },
+    {
+      "id": "wenMoon",
+      "texture": "wenMoon.jpeg",
+      "radius": 0.1,
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "link": "https://www.youtube.com/watch?v=QH2-TGUlwu4"
+    },
+    {
+      "id": "Bldrs",
+      "texture": "bldrs.png",
+      "radius": 0.07,
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "link": "https://bldrs.ai"
+    },
+    {
+      "id": "opensourceConstruction",
+      "texture": "opensource_construction.png",
+      "radius": 0.1,
+      "position": {
+        "x": 1.1,
+        "y": 1.1,
+        "z": 1.1
+      },
+      "link": "https://opensource.construction"
+    }
+  ]
+  
